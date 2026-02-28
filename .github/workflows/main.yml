@@ -10,6 +10,25 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: reservation_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation_test
+      NODE_ENV: test
+
     steps:
       - name: Checkout test repository
         uses: actions/checkout@v3
@@ -17,7 +36,7 @@ jobs:
       - name: Checkout backend repository
         uses: actions/checkout@v3
         with:
-          repository: dongtpc/reservation   # <-- your backend repo
+          repository: dongtpc/reservation
           path: reservation-backend
 
       - name: Setup Node
@@ -40,18 +59,24 @@ jobs:
       - name: Start backend
         working-directory: reservation-backend
         run: |
-          npm install
           npm start > backend.log 2>&1 &
 
       - name: Wait for backend
-        run: sleep 20
+        run: |
+          for i in {1..20}; do
+            nc -z localhost 3000 && echo "Backend is up!" && exit 0
+            echo "Waiting for backend..."
+            sleep 3
+          done
+          echo "Backend failed to start"
+          exit 1
 
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
-      
+
       - name: Show backend logs
         run: cat reservation-backend/backend.log
 
