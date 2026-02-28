@@ -18,7 +18,7 @@ jobs:
       - name: Checkout Backend Repo
         uses: actions/checkout@v3
         with:
-          repository: dongtpc/reservation-backend
+          repository: dongtpc/reservation/reservation-backend
           path: backend
           token: ${{ secrets.GITHUB_TOKEN }}
 
