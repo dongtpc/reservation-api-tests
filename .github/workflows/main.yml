@@ -28,19 +28,24 @@ jobs:
       - name: Install backend dependencies
         working-directory: reservation-backend
         run: npm install
-
+      
       - name: Start backend
         working-directory: reservation-backend
-        run: npm start &
+        run: |
+          npm install
+          npm start > backend.log 2>&1 &
 
       - name: Wait for backend
-        run: sleep 10
+        run: sleep 20
 
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
+      
+      - name: Show backend logs
+        run: cat reservation-backend/backend.log
 
       - name: Run Karate tests
         run: mvn test
