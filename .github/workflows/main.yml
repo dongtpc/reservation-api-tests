@@ -28,7 +28,15 @@ jobs:
       - name: Install backend dependencies
         working-directory: reservation-backend
         run: npm install
-      
+
+      - name: Generate Prisma Client
+        working-directory: reservation-backend
+        run: npx prisma generate
+
+      - name: Run Prisma migrations
+        working-directory: reservation-backend
+        run: npx prisma migrate deploy
+
       - name: Start backend
         working-directory: reservation-backend
         run: |
