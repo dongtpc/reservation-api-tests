@@ -71,14 +71,16 @@ jobs:
           echo "Backend failed to start"
           exit 1
 
+      - name: Show backend logs
+        run: cat reservation-backend/backend.log
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Show backend logs
-        run: cat reservation-backend/backend.log
+
 
       - name: Run Karate tests
         run: mvn test
