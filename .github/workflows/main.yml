@@ -68,7 +68,10 @@ jobs:
             echo "Waiting for backend..."
             sleep 3
           done
+      
           echo "Backend failed to start"
+          echo "==== BACKEND LOGS ===="
+          cat reservation-backend/backend.log
           exit 1
 
       - name: Show backend logs
