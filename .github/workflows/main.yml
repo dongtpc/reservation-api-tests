@@ -28,6 +28,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation_test
       NODE_ENV: test
+      JWT_SECRET: mysupersecretkey
 
     steps:
       - name: Checkout test repository
