@@ -29,8 +29,10 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/reservation_test
       NODE_ENV: test
       JWT_SECRET: mysupersecretkey
+      BASE_URL: http://localhost:3000
 
     steps:
+
       - name: Checkout test repository
         uses: actions/checkout@v3
 
@@ -47,11 +49,13 @@ jobs:
           ls -la
           echo "Listing backend folder:"
           ls -la reservation-backend || echo "Backend folder missing"
+          echo "Listing reservation folder:"
+          ls -la reservation || echo "Reservation folder missing"
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 20
 
       - name: Install backend dependencies
         working-directory: reservation/reservation-backend
@@ -87,16 +91,38 @@ jobs:
           cat reservation/reservation-backend/backend.log
           exit 1
 
-
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
-      
+
       - name: Check admin table
         run: |
           psql $DATABASE_URL -c 'SELECT * FROM "Admin";'
-          
+
       - name: Run Karate tests
         run: mvn test
+
+      # -----------------------------
+      # K6 PERFORMANCE TEST SECTION
+      # -----------------------------
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo apt-get update
+          sudo apt-get install -y gnupg software-properties-common
+          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
+
+      - name: Install k6 test dependencies
+        run: npm install
+
+      - name: Build k6 TypeScript tests
+        run: npx tsc
+
+      - name: Run k6 performance tests
+        run: k6 run dist/tests/login.test.js
