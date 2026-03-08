@@ -1,12 +1,13 @@
 {
   "name": "reservation-api-tests",
   "version": "1.0.0",
-  "description": "API performance tests using k6",
+  "description": "API functional and performance tests for reservation system",
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
     "test:k6": "k6 run dist/tests/login.test.js",
-    "ci": "npm run build && npm run test:k6"
+    "test:karate": "mvn test",
+    "ci": "npm run build && npm run test:k6 && npm run test:karate"
   },
   "repository": {
     "type": "git",
