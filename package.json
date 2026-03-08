@@ -1,0 +1,20 @@
+{
+  "name": "reservation-api-tests",
+  "version": "1.0.0",
+  "description": "API performance tests using k6",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc",
+    "test:k6": "k6 run dist/tests/login.test.js",
+    "ci": "npm run build && npm run test:k6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dongtpc/reservation-api-tests.git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@types/k6": "^1.6.0",
+    "typescript": "^5.9.3"
+  }
+}
